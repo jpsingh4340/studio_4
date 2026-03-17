@@ -16,7 +16,6 @@ jobs:
       - name: ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.10.0
         with:
-          target: "https://rental-haven-c052a.web.app"
           target: "https://rentmate-c7360.web.app/"   # 🔥 CHANGE THIS
           fail_action: false
           cmd_options: "-a"
