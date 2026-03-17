@@ -1,0 +1,309 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper Functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && getUserData().role == 'admin';
+    }
+
+    function isOwner() {
+      return isSignedIn() && getUserData().role == 'owner';
+    }
+
+    function isRenter() {
+      return isSignedIn() && getUserData().role == 'renter';
+    }
+
+    function isOwnerOf(ownerId) {
+      return isSignedIn() && request.auth.uid == ownerId;
+    }
+
+    function isRenterOf(renterId) {
+      return isSignedIn() && request.auth.uid == renterId;
+    }
+
+    // ========================================
+    // USERS COLLECTION
+    // ========================================
+    match /users/{userId} {
+      // Users can read their own data, admins can read all
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+
+      // Users can create their own profile on signup
+      allow create: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       request.resource.data.role in ['renter', 'owner'];
+
+      // Users can update their own data (except role), admins can update anything
+      allow update: if isSignedIn() && (
+        (request.auth.uid == userId &&
+         !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isAdmin', 'createdAt'])) ||
+        isAdmin()
+      );
+
+      // Only admins can delete users
+      allow delete: if isAdmin();
+    }
+
+    // ========================================
+    // EQUIPMENT COLLECTION
+    // ========================================
+    match /equipment/{equipmentId} {
+      // Anyone (even non-authenticated) can read approved equipment
+      // Owners can read their own equipment regardless of approval status
+      // Admins can read everything
+      allow read: if resource.data.approvalStatus == 'approved' ||
+                     (isSignedIn() && isOwnerOf(resource.data.ownerId)) ||
+                     isAdmin();
+
+      // Only owners can create equipment
+      allow create: if isSignedIn() &&
+                       isOwner() &&
+                       request.resource.data.ownerId == request.auth.uid &&
+                       request.resource.data.approvalStatus == 'pending';
+
+      // Owners can update their own equipment
+      // Admins can update approval status and any field
+      allow update: if isSignedIn() && (
+        (isOwnerOf(resource.data.ownerId) &&
+         !request.resource.data.diff(resource.data).affectedKeys().hasAny(['ownerId', 'approvalStatus', 'createdAt'])) ||
+        isAdmin()
+      );
+
+      // Owners can delete their own equipment, admins can delete any
+      allow delete: if isSignedIn() && (
+        isOwnerOf(resource.data.ownerId) || isAdmin()
+      );
+    }
+
+    // ========================================
+    // RENTALS COLLECTION
+    // ========================================
+    match /rentals/{rentalId} {
+      // Renters and owners involved can read, admins can read all
+      allow read: if isSignedIn() && (
+        isRenterOf(resource.data.renterId) ||
+        isOwnerOf(resource.data.ownerId) ||
+        isAdmin()
+      );
+
+      // Only renters can create rental requests
+      allow create: if isSignedIn() &&
+                       isRenter() &&
+                       request.resource.data.renterId == request.auth.uid &&
+                       request.resource.data.status == 'pending';
+
+      // Owners can update status (approve/reject)
+      // Renters can update certain fields (notes, etc.)
+      // Admins can update anything
+      allow update: if isSignedIn() && (
+        (isOwnerOf(resource.data.ownerId) &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt', 'approvedAt', 'approvedBy', 'rejectedAt', 'rejectedBy'])) ||
+        (isRenterOf(resource.data.renterId) &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['notes', 'updatedAt'])) ||
+        isAdmin()
+      );
+
+      // Only admins can delete rentals
+      allow delete: if isAdmin();
+    }
+
+    // ========================================
+    // FAVORITES COLLECTION
+    // ========================================
+    match /favorites/{favoriteId} {
+      // Users can only read their own favorites
+      allow read: if isSignedIn() && request.auth.uid == resource.data.userId;
+
+      // Users can create their own favorites
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+
+      // Users can update their own favorites
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid;
+
+      // Users can delete their own favorites
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // ========================================
+    // NOTIFICATIONS COLLECTION
+    // ========================================
+    match /notifications/{notificationId} {
+      // Users can read their own notifications
+      allow read: if isSignedIn() && request.auth.uid == resource.data.userId;
+
+      // Only system/cloud functions can create notifications
+      // Allow if request has no auth (server-side call)
+      allow create: if true; // Cloud Functions will create these
+
+      // Users can update read status of their own notifications
+      allow update: if isSignedIn() &&
+                       resource.data.userId == request.auth.uid &&
+                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'readAt']);
+
+      // Users can delete their own notifications
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // ========================================
+    // REVIEWS COLLECTION
+    // ========================================
+    match /reviews/{reviewId} {
+      // Anyone can read reviews
+      allow read: if true;
+
+      // Only renters who have completed a rental can create reviews
+      allow create: if isSignedIn() &&
+                       isRenter() &&
+                       request.resource.data.reviewerId == request.auth.uid &&
+                       exists(/databases/$(database)/documents/rentals/$(request.resource.data.rentalId)) &&
+                       get(/databases/$(database)/documents/rentals/$(request.resource.data.rentalId)).data.status == 'completed' &&
+                       get(/databases/$(database)/documents/rentals/$(request.resource.data.rentalId)).data.renterId == request.auth.uid;
+
+      // Reviewers can update their own reviews, admins can update any
+      allow update: if isSignedIn() && (
+        (request.auth.uid == resource.data.reviewerId &&
+         !request.resource.data.diff(resource.data).affectedKeys().hasAny(['reviewerId', 'equipmentId', 'rentalId', 'createdAt'])) ||
+        isAdmin()
+      );
+
+      // Reviewers can delete their own reviews, admins can delete any
+      allow delete: if isSignedIn() && (
+        request.auth.uid == resource.data.reviewerId || isAdmin()
+      );
+    }
+
+    // ========================================
+    // DISPUTES COLLECTION
+    // ========================================
+    match /disputes/{disputeId} {
+      // Involved parties and admins can read
+      allow read: if isSignedIn() && (
+        request.auth.uid == resource.data.reportedBy ||
+        request.auth.uid == resource.data.renterId ||
+        request.auth.uid == resource.data.ownerId ||
+        isAdmin()
+      );
+
+      // Renters and owners can create disputes about their rentals
+      allow create: if isSignedIn() &&
+                       request.resource.data.reportedBy == request.auth.uid &&
+                       exists(/databases/$(database)/documents/rentals/$(request.resource.data.rentalId)) &&
+                       (get(/databases/$(database)/documents/rentals/$(request.resource.data.rentalId)).data.renterId == request.auth.uid ||
+                        get(/databases/$(database)/documents/rentals/$(request.resource.data.rentalId)).data.ownerId == request.auth.uid);
+
+      // Only admins can update disputes (resolve them)
+      allow update: if isAdmin();
+
+      // Only admins can delete disputes
+      allow delete: if isAdmin();
+    }
+
+    // ========================================
+    // ADMIN ACTIONS (AUDIT LOG)
+    // ========================================
+    match /adminActions/{actionId} {
+      // Only admins can read audit logs
+      allow read: if isAdmin();
+
+      // Only system/cloud functions can create audit logs
+      allow create: if true; // Cloud Functions will create these
+
+      // No updates or deletes allowed (immutable audit log)
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // ========================================
+    // SETTINGS (ADMIN-CONTROLLED)
+    // ========================================
+    match /settings/{settingId} {
+      // Anyone can read platform settings
+      allow read: if true;
+
+      // Only admins can create/update/delete settings
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ========================================
+    // MESSAGES (CHAT)
+    // ========================================
+    match /messages/{messageId} {
+      // Users can read messages where they are sender or receiver
+      allow read: if isSignedIn() && (
+        request.auth.uid == resource.data.senderId ||
+        request.auth.uid == resource.data.receiverId ||
+        isAdmin()
+      );
+
+      // Users can create messages where they are the sender
+      allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid;
+
+      // Users can update read status of messages sent to them
+      allow update: if isSignedIn() &&
+                       resource.data.receiverId == request.auth.uid &&
+                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'readAt']);
+
+      // Only sender can delete their own messages
+      allow delete: if isSignedIn() && resource.data.senderId == request.auth.uid;
+    }
+
+    // ========================================
+    // FEEDBACK COLLECTIONS
+    // ========================================
+    match /generalFeedbacks/{feedbackId} {
+      // Only admins can read all feedback
+      allow read: if isAdmin();
+
+      // Authenticated users can create feedback
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+
+      // No updates or deletes
+      allow update, delete: if false;
+    }
+
+    match /rentalFeedbacks/{feedbackId} {
+      // Only admins can read all feedback
+      allow read: if isAdmin();
+
+      // Authenticated users can create feedback
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+
+      // No updates or deletes
+      allow update, delete: if false;
+    }
+
+    // ========================================
+    // PAYMENTS COLLECTION
+    // ========================================
+    match /payments/{paymentId} {
+      // Users can read their own payments, admins can read all
+      allow read: if isSignedIn() && (
+        request.auth.uid == resource.data.userId || isAdmin()
+      );
+
+      // Only system/cloud functions can create payments
+      allow create: if true; // Stripe webhook will create these
+
+      // Only system/cloud functions can update payments
+      allow update: if true; // Stripe webhook will update these
+
+      // No deletes allowed
+      allow delete: if false;
+    }
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

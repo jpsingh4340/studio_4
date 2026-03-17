@@ -1,0 +1,243 @@
+/* src/components/Feedback/CongratulatoryToast.css */
+
+.congratulatory-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  transform: translateX(400px);
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.congratulatory-toast.visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast-container {
+  width: 360px;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  position: relative;
+  animation: bounce 0.6s ease-out;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Confetti animation */
+.confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  opacity: 0.8;
+  animation: confettiFall 3s ease-out forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    top: -10px;
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    transform: rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Content */
+.toast-content {
+  display: flex;
+  align-items: flex-start;
+  padding: 20px;
+  gap: 16px;
+  position: relative;
+}
+
+.toast-emoji {
+  font-size: 48px;
+  flex-shrink: 0;
+  animation: celebrate 1s ease-in-out infinite;
+}
+
+@keyframes celebrate {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(-10deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(10deg);
+  }
+}
+
+.toast-text {
+  flex: 1;
+  color: white;
+}
+
+.toast-text h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: white;
+}
+
+.toast-message {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: white;
+}
+
+.toast-subtitle {
+  font-size: 14px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.toast-dismiss {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.toast-dismiss:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Action button */
+.toast-action-btn {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 14px 20px;
+  margin: 0 20px 20px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  width: calc(100% - 40px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.toast-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.toast-action-btn:active {
+  transform: translateY(0);
+}
+
+/* Progress bar */
+.toast-progress {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.toast-progress-fill {
+  height: 100%;
+  background: white;
+  transition: width 0.05s linear;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .congratulatory-toast {
+    top: auto;
+    bottom: 20px;
+    right: 16px;
+    left: 16px;
+    transform: translateY(400px);
+  }
+
+  .congratulatory-toast.visible {
+    transform: translateY(0);
+  }
+
+  .toast-container {
+    width: 100%;
+  }
+
+  .toast-content {
+    padding: 16px;
+  }
+
+  .toast-emoji {
+    font-size: 40px;
+  }
+
+  .toast-text h3 {
+    font-size: 18px;
+  }
+
+  .toast-message {
+    font-size: 15px;
+  }
+
+  .toast-subtitle {
+    font-size: 13px;
+  }
+
+  .toast-action-btn {
+    margin: 0 16px 16px;
+    width: calc(100% - 32px);
+    font-size: 14px;
+    padding: 12px 16px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .congratulatory-toast,
+  .toast-container,
+  .confetti,
+  .toast-emoji {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .congratulatory-toast.visible {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

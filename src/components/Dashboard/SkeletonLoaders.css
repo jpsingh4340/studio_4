@@ -1,0 +1,516 @@
+/* src/components/Dashboard/SkeletonLoaders.css */
+
+/* Base skeleton styles */
+.skeleton-text,
+.skeleton-circle,
+.skeleton-rectangle,
+.skeleton-avatar,
+.skeleton-card-image,
+.skeleton-stats-icon,
+.skeleton-button,
+.skeleton-rental-image,
+.skeleton-activity-icon,
+.skeleton-modal-close,
+.skeleton-search-input,
+.skeleton-search-filter,
+.skeleton-search-button {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Hero Section Skeleton */
+.skeleton-hero {
+  background: linear-gradient(135deg, #e0e0e0 0%, #d0d0d0 100%);
+  border-radius: 24px;
+  padding: 40px;
+  margin-bottom: 32px;
+}
+
+.skeleton-content {
+  display: flex;
+  gap: 40px;
+}
+
+.skeleton-left {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+}
+
+.skeleton-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeleton-text-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-greeting {
+  width: 150px;
+  height: 16px;
+}
+
+.skeleton-title {
+  width: 300px;
+  height: 32px;
+}
+
+.skeleton-subtitle {
+  width: 250px;
+  height: 16px;
+}
+
+.skeleton-right {
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.skeleton-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.skeleton-stat-card {
+  height: 80px;
+  border-radius: 12px;
+}
+
+.skeleton-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.skeleton-button-primary,
+.skeleton-button-secondary {
+  flex: 1;
+  height: 56px;
+  border-radius: 12px;
+}
+
+/* Equipment Card Skeleton */
+.skeleton-equipment-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.skeleton-card-image {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #d0d0d0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-card-body {
+  padding: 16px;
+}
+
+.skeleton-card-title {
+  width: 80%;
+  height: 20px;
+  margin-bottom: 12px;
+}
+
+.skeleton-card-desc {
+  width: 100%;
+  height: 14px;
+  margin-bottom: 8px;
+}
+
+.skeleton-card-desc.short {
+  width: 60%;
+}
+
+.skeleton-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.skeleton-price {
+  width: 80px;
+  height: 24px;
+}
+
+.skeleton-button-small {
+  width: 100px;
+  height: 36px;
+}
+
+/* Equipment Grid Skeleton */
+.skeleton-equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* Stats Dashboard Skeleton */
+.skeleton-stats-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.skeleton-stats-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.skeleton-stats-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.skeleton-stats-content {
+  flex: 1;
+}
+
+.skeleton-stat-value {
+  width: 60px;
+  height: 28px;
+  margin-bottom: 8px;
+}
+
+.skeleton-stat-label {
+  width: 120px;
+  height: 16px;
+}
+
+/* Rental History Skeleton */
+.skeleton-rental-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeleton-rental-item {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.skeleton-rental-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.skeleton-rental-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-rental-name {
+  width: 200px;
+  height: 20px;
+}
+
+.skeleton-rental-date {
+  width: 150px;
+  height: 16px;
+}
+
+.skeleton-rental-price {
+  width: 100px;
+  height: 18px;
+}
+
+.skeleton-rental-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Search Bar Skeleton */
+.skeleton-search-bar {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.skeleton-search-input {
+  flex: 1;
+  height: 48px;
+  border-radius: 8px;
+}
+
+.skeleton-search-filter {
+  width: 150px;
+  height: 48px;
+  border-radius: 8px;
+}
+
+.skeleton-search-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+}
+
+/* Activity Feed Skeleton */
+.skeleton-activity-feed {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.skeleton-feed-title {
+  width: 150px;
+  height: 24px;
+  margin-bottom: 20px;
+}
+
+.skeleton-activity-item {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.skeleton-activity-item:last-child {
+  border-bottom: none;
+}
+
+.skeleton-activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeleton-activity-content {
+  flex: 1;
+}
+
+.skeleton-activity-text {
+  width: 80%;
+  height: 16px;
+  margin-bottom: 6px;
+}
+
+.skeleton-activity-time {
+  width: 100px;
+  height: 14px;
+}
+
+/* Table Skeleton */
+.skeleton-table {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.skeleton-table-header {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.skeleton-table-heading {
+  height: 16px;
+  width: 80%;
+}
+
+.skeleton-table-body {
+  padding: 20px;
+}
+
+.skeleton-table-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.skeleton-table-row:last-child {
+  border-bottom: none;
+}
+
+.skeleton-table-cell {
+  height: 16px;
+  width: 90%;
+}
+
+/* Modal Skeleton */
+.skeleton-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.skeleton-modal {
+  background: white;
+  border-radius: 16px;
+  width: 500px;
+  max-width: 90%;
+}
+
+.skeleton-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.skeleton-modal-title {
+  width: 200px;
+  height: 24px;
+}
+
+.skeleton-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.skeleton-modal-body {
+  padding: 24px;
+}
+
+.skeleton-modal-text {
+  width: 100%;
+  height: 16px;
+  margin-bottom: 12px;
+}
+
+.skeleton-modal-text.short {
+  width: 60%;
+}
+
+.skeleton-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 24px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.skeleton-button-cancel,
+.skeleton-button-confirm {
+  width: 100px;
+  height: 40px;
+}
+
+/* Generic skeleton components */
+.skeleton-circle {
+  border-radius: 50%;
+}
+
+.skeleton-rectangle {
+  border-radius: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .skeleton-content {
+    flex-direction: column;
+  }
+
+  .skeleton-right {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .skeleton-equipment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skeleton-stats-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .skeleton-rental-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .skeleton-search-bar {
+    flex-direction: column;
+  }
+
+  .skeleton-search-filter {
+    width: 100%;
+  }
+}
+
+/* Accessibility - Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-text,
+  .skeleton-circle,
+  .skeleton-rectangle,
+  .skeleton-avatar,
+  .skeleton-card-image,
+  .skeleton-stats-icon,
+  .skeleton-button,
+  .skeleton-rental-image,
+  .skeleton-activity-icon,
+  .skeleton-modal-close,
+  .skeleton-search-input,
+  .skeleton-search-filter,
+  .skeleton-search-button {
+    animation: none;
+    background: #f0f0f0;
+  }
+}
