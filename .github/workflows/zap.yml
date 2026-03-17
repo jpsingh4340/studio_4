@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 🔐 ZAP BASELINE SCAN (FAST)
+      # 🔐 ZAP BASELINE SCAN 
       - name: ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.10.0
         with:
