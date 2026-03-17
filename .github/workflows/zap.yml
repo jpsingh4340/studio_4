@@ -1,0 +1,36 @@
+name: OWASP ZAP Full Security Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 🔐 ZAP BASELINE SCAN (FAST)
+      - name: ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.10.0
+        with:
+          target: "https://rental-haven-c052a.web.app"   # 🔥 CHANGE THIS
+          fail_action: false
+          cmd_options: "-a"
+
+      # 🔥 ZAP FULL SCAN (DEEP)
+      - name: ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.5.0
+        with:
+          target: "https://rental-haven-c052a.web.app"   # 🔥 SAME URL
+          fail_action: false
+
+      # 📄 Upload Report
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: report_html.html
