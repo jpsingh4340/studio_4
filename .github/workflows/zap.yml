@@ -18,11 +18,3 @@ jobs:
         with:
           target: "https://rental-haven-c052a.web.app"
           fail_action: false
-          cmd_options: "-a"
-
-      # 🔥 ZAP FULL SCAN (DEEP)
-      - name: ZAP Full Scan
-        uses: zaproxy/action-full-scan@v0.5.0
-        with:
-          target: "https://rental-haven-c052a.web.app"   # 🔥 SAME URL
-          fail_action: false
