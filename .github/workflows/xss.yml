@@ -1,0 +1,56 @@
+name: XSS Security Scan
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  xss-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout code
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. Setup Node
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: "18"
+
+    # 3. Install dependencies
+    - name: Install dependencies
+      run: npm install
+
+    # 4. Build app (ignore warnings)
+    - name: Build app
+      run: npm run build
+      env:
+        CI: false
+
+    # 5. Start app
+    - name: Start app
+      run: |
+        npm install -g serve
+        serve -s build -l 3000 &
+        sleep 5
+
+    # 6. Run OWASP ZAP Scan (focus on XSS)
+    - name: Run ZAP XSS Scan
+      uses: zaproxy/action-baseline@v0.12.0
+      with:
+        target: 'http://localhost:3000'
+        cmd_options: >
+          -a 
+          -x xss-report.xml
+          -z "-config rules.alertThreshold=LOW"
+
+    # 7. Upload XSS XML report
+    - name: Upload XSS Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: xss-report
+        path: xss-report.xml
