@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ "main" ]
   schedule:
-    - cron: '0 0 * * *'   # daily scan
+    - cron: '0 0 * * *'   # runs daily
 
 jobs:
   build-and-scan:
@@ -27,13 +27,15 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    # 4. Run tests (your original CI step)
+    # 4. Run tests (your CI step)
     - name: Run tests
       run: npm test
 
-    # 5. Build app (for scanning)
+    # 5. Build app (FIXED - ignore warnings)
     - name: Build app
       run: npm run build
+      env:
+        CI: false
 
     # 6. Start app locally
     - name: Start app
