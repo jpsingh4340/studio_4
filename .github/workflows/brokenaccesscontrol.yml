@@ -32,15 +32,16 @@ jobs:
           serve -s build -l 3000 &
           sleep 10
 
-      - name: Run ZAP Full Scan
+      - name: Run ZAP Full Scan (NO artifact)
         uses: zaproxy/action-full-scan@v0.10.0
         with:
           target: 'http://localhost:3000'
           cmd_options: '-a -z "-config scanner.attackStrength=HIGH -config scanner.alertThreshold=LOW"'
           fail_action: false
           allow_issue_writing: false
+          artifact_name: ""   # 🔥 IMPORTANT FIX
 
-      - name: Upload ZAP reports
+      - name: Upload ZAP reports manually
         uses: actions/upload-artifact@v4
         with:
           name: bac_reports
