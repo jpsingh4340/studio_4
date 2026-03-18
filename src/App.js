@@ -43,6 +43,7 @@ import AuthDebug from "./components/AuthDebug";
 import QRCodePage from "./pages/QRCodePage";
 import QRHandler from "./pages/QRHandler";
 
+
 // CSS
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -70,6 +71,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
+                
 
                 {/* QR Code Tools Routes */}
                 <Route path="/qr-tools" element={<QRCodePage />} />
