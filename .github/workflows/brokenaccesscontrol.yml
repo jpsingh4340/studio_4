@@ -39,6 +39,7 @@ jobs:
           target: 'http://localhost:3000'
           cmd_options: '-a -z "-config scanner.attackStrength=HIGH -config scanner.alertThreshold=LOW"'
           fail_action: false
+          allow_issue_writing: false
           artifact_name: broken-access-control-scan
 
       - name: Upload ZAP reports
