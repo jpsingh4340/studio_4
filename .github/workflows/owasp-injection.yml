@@ -1,0 +1,56 @@
+name: OWASP Injection Scan
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  injection-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout code
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. Setup Node
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: "18"
+
+    # 3. Install dependencies
+    - name: Install dependencies
+      run: npm install
+
+    # 4. Build app (ignore warnings)
+    - name: Build app
+      run: npm run build
+      env:
+        CI: false
+
+    # 5. Start app
+    - name: Start app
+      run: |
+        npm install -g serve
+        serve -s build -l 3000 &
+        sleep 5
+
+    # 6. Run OWASP ZAP FULL Scan (Injection focused)
+    - name: Run ZAP Full Scan (Injection)
+      uses: zaproxy/action-full-scan@v0.10.0
+      with:
+        target: 'http://localhost:3000'
+        cmd_options: >
+          -a
+          -x injection-report.xml
+          -z "-config scanner.attackStrength=HIGH -config scanner.alertThreshold=LOW"
+
+    # 7. Upload XML report
+    - name: Upload Injection Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: injection-report
+        path: injection-report.xml
