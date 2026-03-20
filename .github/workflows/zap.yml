@@ -26,7 +26,7 @@ jobs:
             -v ${{ github.workspace }}/zap-reports:/zap/wrk/:rw \
             ghcr.io/zaproxy/zaproxy:stable \
             zap-baseline.py \
-            -t https://rental-haven-c052a.web.app \
+            -t https://rentmate-c7360.web.app/ \
             -J report_json.json \
             -w report_md.md \
             -r report_html.html || true
