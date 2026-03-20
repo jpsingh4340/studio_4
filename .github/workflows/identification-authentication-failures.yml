@@ -1,0 +1,62 @@
+name: OWASP Identification and Authentication Failures Scan
+ 
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+ 
+jobs:
+  auth-scan:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+ 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+ 
+      - name: Install dependencies
+        run: npm install
+ 
+      - name: Build app
+        run: npm run build
+        env:
+          CI: false
+ 
+      - name: Start app
+        run: |
+          npm install -g serve
+          serve -s build -l 3000 &
+          sleep 10
+ 
+      - name: Prepare ZAP report folder
+        run: |
+          mkdir -p zap-reports
+          chmod -R 777 zap-reports
+ 
+      - name: Run ZAP Full Scan for Identification and Authentication Failures
+        run: |
+          docker pull ghcr.io/zaproxy/zaproxy:stable
+          docker run --rm \
+            --network=host \
+            -v ${{ github.workspace }}/zap-reports:/zap/wrk/:rw \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-full-scan.py \
+            -t http://localhost:3000 \
+            -J report_json.json \
+            -w report_md.md \
+            -r report_html.html \
+            -a \
+            -z "-config scanner.attackStrength=HIGH -config scanner.alertThreshold=LOW" || true
+ 
+      - name: Upload ZAP reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: identification_authentication_reports
+          path: |
+            zap-reports/report_html.html
+            zap-reports/report_md.md
+            zap-reports/report_json.json
