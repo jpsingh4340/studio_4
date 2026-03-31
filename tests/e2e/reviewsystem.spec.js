@@ -1,6 +1,5 @@
 /**
  * E2E Tests: Review & Rating System
- * Cleaner version with same logic
  */
 
 const { test, expect } = require('@playwright/test');
